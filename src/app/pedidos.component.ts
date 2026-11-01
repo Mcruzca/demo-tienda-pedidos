@@ -13,7 +13,7 @@ interface Pedido { id: number; productos: string; total: number; fecha: string; 
  <div class="columnas"><div>
    @if (error()) { <p>{{ error() }}</p> }
    @for (p of pedidos(); track p.id) {
-     <div class="pedido"><b>Pedido #{{ p.id }} · S/ {{ p.total.toFixed(2) }}</b><span>{{ p.productos }}</span><small>{{ p.fecha }}</small></div>
+     <div class="pedido"><b>Pedido #{{ p.id }} · S/ {{ total(p).toFixed(2) }}</b><span>{{ p.productos }}</span><small>{{ p.fecha }}</small></div>
    } @empty { @if (!error()) { <p>Todavía no hay pedidos. Finaliza una compra en el carrito.</p> } }
  </div>
  <!-- La misma pieza del módulo carrito, reutilizada en otro módulo Angular. -->
@@ -28,6 +28,8 @@ interface Pedido { id: number; productos: string; total: number; fecha: string; 
 export class PedidosComponent implements OnInit {
  pedidos = signal<Pedido[]>([]);
  error = signal('');
+ // Le pide al shell el total con descuento e IGV; si no lo tiene (o no hay shell), usa el de la API.
+ total(p: Pedido): number { return (window as any).tiendaEstado?.totalPedido(p.id) ?? p.total; }
  async ngOnInit() {
    try {
      const respuesta = await fetch(API + '/pedidos');
