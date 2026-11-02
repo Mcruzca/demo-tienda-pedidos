@@ -28,8 +28,8 @@ interface Pedido { id: number; productos: string; total: number; fecha: string; 
 export class PedidosComponent implements OnInit {
  pedidos = signal<Pedido[]>([]);
  error = signal('');
- // Le pide al shell el total con descuento e IGV; si no lo tiene (o no hay shell), usa el de la API.
- total(p: Pedido): number { return (window as any).tiendaEstado?.totalPedido(p.id) ?? p.total; }
+ // Le pide al shell el total con descuento e IGV; si no lo tiene (pedidos antiguos), usa el de la API.
+ total(p: Pedido): number { return (window as any).tiendaEstado.totalPedido(p.id) ?? p.total; }
  async ngOnInit() {
    try {
      const respuesta = await fetch(API + '/pedidos');
